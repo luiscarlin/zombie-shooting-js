@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
-  </head>
+    <script language="javascript" type="text/javascript" src="https://code.createjs.com/createjs-2015.11.26.min.js" ></script>  </head>
   <body onload="init();" >
-  	<canvas id="gameCanvas" witdh="800" height="500" ></canvas>
+    <canvas id="gameCanvas" ></canvas>
 
-  	<script>
-  	  // global variables 
-	  var image;
-	  var stage;
+    <script>
+      // global variables 
+      var image;
+      var stage;
+      var WIDTH = 800; 
+      var HEIGHT = 500; 
+      var preload;
+      var manifest;
 
-	  function init() { 
-	  	stage = new createjs.Stage("gameCanvas");
-	 	image = new createjs.Bitmap("assets/background.png");
-		stage.addChild(image);
-		stage.update();
-	  }
-  	</script>
+      function init() { 
+        var canvas = document.getElementById("gameCanvas"); 
+        context = canvas.getContext('2d');
+        context.canvas.width = WIDTH;
+        context.canvas.height = HEIGHT;
+        
+        stage = new createjs.Stage("gameCanvas");
+
+        load()
+      }
+
+      function load() { 
+        // set up the loading queue
+        queue = new createjs.LoadQueue(false);
+        queue.installPlugin(createjs.Sound);
+        queue.on("complete", queueLoaded, this);
+        createjs.Sound.alternateExtensions = ["ogg"];
+
+        // add assets to the loading queue
+        queue.loadManifest([
+        {id: 'backgroundImage', src: 'assets/background.png'}
+        ]);
+        queue.load();
+      }
+
+      function queueLoaded(event) { 
+        // queue was loaded, now add them to the canvas
+
+        // add background image
+        var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
+        stage.addChild(backgroundImage); 
+
+        stage.update();
+      }
+
+    </script>
   </body>
 </html>
