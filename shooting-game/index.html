@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Shooting Game</title>
     <script language="javascript" type="text/javascript" src="https://code.createjs.com/createjs-2015.11.26.min.js" ></script>  </head>
   <body onload="init();" >
     <canvas id="gameCanvas" ></canvas>
 
     <script>
-      // global variables 
-      var image;
-      var stage;
+      
+      // constants
       var WIDTH = 800; 
       var HEIGHT = 500; 
+
+      // globals
+      var image;
+      var stage;
       var preload;
       var manifest;
 
@@ -22,10 +26,10 @@
         
         stage = new createjs.Stage("gameCanvas");
 
-        load()
+        loadAssets()
       }
 
-      function load() { 
+      function loadAssets() { 
         // set up the loading queue
         queue = new createjs.LoadQueue(false);
         queue.installPlugin(createjs.Sound);
@@ -34,19 +38,24 @@
 
         // add assets to the loading queue
         queue.loadManifest([
-        {id: 'backgroundImage', src: 'assets/background.png'}
+          {id: 'backgroundImage', src: 'assets/art/background.png'}, 
+          {id: 'crossHair', src: 'assets/art/crosshairs/circle-02.png'},
+          {id: 'zombie', src: 'assets/art/crosshairs/1.png'}
         ]);
         queue.load();
       }
 
       function queueLoaded(event) { 
-        // queue was loaded, now add them to the canvas
 
-        // add background image
-        var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
-        stage.addChild(backgroundImage); 
+        addAssetsToCanvas();
 
         stage.update();
+      }
+
+      function addAssetsToCanvas() { 
+        // add the background
+        var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
+        stage.addChild(backgroundImage); 
       }
 
     </script>
