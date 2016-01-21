@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+  </head>
+  <body onload="init();" >
+  	<canvas id="gameCanvas" witdh="800" height="500" ></canvas>
+
+  	<script>
+  	  // global variables 
+	  var image;
+	  var stage;
+
+	  function init() { 
+	  	stage = new createjs.Stage("gameCanvas");
+	 	image = new createjs.Bitmap("assets/background.png");
+		stage.addChild(image);
+		stage.update();
+	  }
+  	</script>
+  </body>
+</html>
