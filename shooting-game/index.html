@@ -17,6 +17,8 @@
       var stage;
       var preload;
       var manifest;
+      var queue;
+      var score = 0;
 
       function init() { 
         var canvas = document.getElementById("gameCanvas"); 
@@ -40,7 +42,7 @@
         queue.loadManifest([
           {id: 'backgroundImage', src: 'assets/art/background.png'}, 
           {id: 'crossHair', src: 'assets/art/crosshairs/circle-02.png'},
-          {id: 'zombie', src: 'assets/art/crosshairs/1.png'}
+          {id: 'zombie', src: 'assets/art/zombie/1.png'}
         ]);
         queue.load();
       }
@@ -48,14 +50,38 @@
       function queueLoaded(event) { 
 
         addAssetsToCanvas();
-
         stage.update();
       }
 
       function addAssetsToCanvas() { 
+
         // add the background
         var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
         stage.addChild(backgroundImage); 
+
+        // add zombie 
+        var zombieImage = new createjs.Bitmap(queue.getResult("zombie"))
+        zombieImage.scaleX=1.5;
+        zombieImage.scaleY=1.5;
+        zombieImage.x = (stage.canvas.width - zombieImage.image.width * zombieImage.scaleX) * Math.random();
+        zombieImage.y = (stage.canvas.height - zombieImage.image.height * zombieImage.scaleY) * Math.random();
+        stage.addChild(zombieImage); 
+
+        // add crosshair
+        var crosshairImage = new createjs.Bitmap(queue.getResult("crossHair"))
+        crosshairImage.scaleX=0.3;
+        crosshairImage.scaleY=0.3;
+        crosshairImage.x = (stage.canvas.width - crosshairImage.image.width * crosshairImage.scaleX) / 2;
+        crosshairImage.y = (stage.canvas.height - crosshairImage.image.height * crosshairImage.scaleY) / 2;
+
+        stage.addChild(crosshairImage); 
+
+        // add score
+        scoreText = new createjs.Text("1UP: " + score.toString(), "36px Arial", "#FFF");
+        scoreText.x = 10;
+        scoreText.y = 10;
+        stage.addChild(scoreText);
+
       }
 
     </script>
