@@ -19,6 +19,7 @@
       var manifest;
       var queue;
       var score = 0;
+      var gameTime = 0; 
 
       function init() { 
         var canvas = document.getElementById("gameCanvas"); 
@@ -42,7 +43,8 @@
         queue.loadManifest([
           {id: 'backgroundImage', src: 'assets/art/background.png'}, 
           {id: 'crossHair', src: 'assets/art/crosshairs/circle-02.png'},
-          {id: 'zombie', src: 'assets/art/zombie/1.png'}
+          {id: 'zombie', src: 'assets/art/zombie/1.png'},
+          {id: 'backgroundMusic', src: 'assets/sound/Imminent Threat.mp3'}
         ]);
         queue.load();
       }
@@ -77,10 +79,21 @@
         stage.addChild(crosshairImage); 
 
         // add score
-        scoreText = new createjs.Text("1UP: " + score.toString(), "36px Arial", "#FFF");
+        var scoreText = new createjs.Text("1UP: " + score.toString(), "36px Arial", "#FFF");
         scoreText.x = 10;
         scoreText.y = 10;
         stage.addChild(scoreText);
+
+        // add timer 
+        var timerText = new createjs.Text("Time: " + gameTime.toString(), "36px Arial", "#FFF");
+        timerText.x = WIDTH - 150;
+        timerText.y = 10;
+        stage.addChild(timerText);
+
+        // add background music 
+        createjs.Sound.play("backgroundMusic", {loop: -1});
+
+
 
       }
 
