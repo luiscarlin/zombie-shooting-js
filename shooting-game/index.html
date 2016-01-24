@@ -20,6 +20,13 @@
       var queue;
       var score = 0;
       var gameTime = 0; 
+      var zombieSpeed = 0;
+      var zombiePositionX; 
+      var zombiePositionY;
+
+      var zombies = [];
+
+
 
       function init() { 
         var canvas = document.getElementById("gameCanvas"); 
@@ -61,13 +68,6 @@
         var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
         stage.addChild(backgroundImage); 
 
-        // add zombie 
-        var zombieImage = new createjs.Bitmap(queue.getResult("zombie"))
-        zombieImage.scaleX=1.5;
-        zombieImage.scaleY=1.5;
-        zombieImage.x = (stage.canvas.width - zombieImage.image.width * zombieImage.scaleX) * Math.random();
-        zombieImage.y = (stage.canvas.height - zombieImage.image.height * zombieImage.scaleY) * Math.random();
-        stage.addChild(zombieImage); 
 
         // add crosshair
         var crosshairImage = new createjs.Bitmap(queue.getResult("crossHair"))
@@ -93,10 +93,111 @@
         // add background music 
         createjs.Sound.play("backgroundMusic", {loop: -1});
 
+        spawnZombies(1);
 
-
+        // add ticker 
+        //createjs.Ticker.setFPS(15);
+        createjs.Ticker.addEventListener('tick', stage);
+        createjs.Ticker.addEventListener('tick', tickEvent);
       }
 
+      // spuns a zombie in a ramdom location (within the screen)
+      function spawnZombies(numberOfZombies) { 
+
+        if (numberOfZombies <= 0) {
+          throw ("Need to specify number of zombies"); 
+        }
+        for (var i = 0; i < numberOfZombies; i++ ) { 
+          var newZombie = new Zombie(stage, queue.getResult("zombie")); 
+          newZombie.setup(true); 
+          newZombie.draw();
+          zombies.push(newZombie);
+        }
+      }
+
+      function tickEvent() { 
+        // move the zombie
+        for (var i = 0; i < zombies.length; i++) { 
+          zombies[i].walk();
+        }
+      }
+
+      function Zombie (stage, manifestItem) {
+        this.x = 0;
+        this.y = 0;
+        this.scaleX = 1.5;
+        this.scaleY = 1.5;
+        this.maxSpeedX = 20; 
+        this.maxSpeedY = 20;
+        this.manifestItem = manifestItem;
+        this.stage = stage;
+        this.zombieImage;        
+
+        this.setup = function(ramdomStart) { 
+          this.zombieImage = new createjs.Bitmap(this.manifestItem);
+
+          if (ramdomStart) { 
+            this.x = Math.random() * (this.stage.canvas.width - this.zombieImage.image.width * this.scaleX);
+            this.y = Math.random() * (this.stage.canvas.height - this.zombieImage.image.height * this.scaleY);
+          }
+
+          var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+          this.maxSpeedX *= plusOrMinus;
+          this.maxSpeedY *= plusOrMinus;
+
+        };
+
+        this.draw = function () { 
+          this.zombieImage.x = this.x;
+          this.zombieImage.y = this.y;
+          this.zombieImage.scaleX = this.scaleX;
+          this.zombieImage.scaleY = this.scaleY;
+
+          stage.addChild(this.zombieImage); 
+        };
+
+        this.walk = function() {
+
+          this.x += this.maxSpeedX * Math.random(); 
+          this.y += this.maxSpeedY * Math.random();
+
+          if (this.outsideStageX()) { 
+            this.x += this.maxSpeedX * Math.random() * (-1);
+          }
+
+          if (this.outsideStageY()) { 
+            this.y *= this.maxSpeedY * Math.random() * (-1); 
+          }
+
+          this.draw();
+        };
+
+        this.outsideStageX = function() {
+
+          // check left 
+          if (this.x < 0) { 
+            return true; 
+          }
+          // check right
+          else if ((this.x + this.zombieImage.image.width * this.scaleX) > this.stage.canvas.width) { 
+            return true;
+          }
+          return false;
+        };
+
+
+        this.outsideStageY = function() {
+
+          if (this.y < 0) { 
+            return true;
+          }
+          else if ((this.y + this.zombieImage.image.height * this.scaleY) > this.stage.canvas.height) { 
+            return true;
+          }
+          return false;
+        };
+      }
+     
     </script>
   </body>
 </html>
