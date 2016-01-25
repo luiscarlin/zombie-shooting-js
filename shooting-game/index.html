@@ -23,20 +23,21 @@
       var zombieSpeed = 0;
       var zombiePositionX; 
       var zombiePositionY;
-
+      var crosshairImage;
       var zombies = [];
-
-
 
       function init() { 
         var canvas = document.getElementById("gameCanvas"); 
         context = canvas.getContext('2d');
         context.canvas.width = WIDTH;
         context.canvas.height = HEIGHT;
+
+        // hide the cursor
+        canvas.style.cursor = 'none';
         
         stage = new createjs.Stage("gameCanvas");
 
-        loadAssets()
+        loadAssets();
       }
 
       function loadAssets() { 
@@ -51,7 +52,8 @@
           {id: 'backgroundImage', src: 'assets/art/background.png'}, 
           {id: 'crossHair', src: 'assets/art/crosshairs/circle-02.png'},
           {id: 'zombie', src: 'assets/art/zombie/1.png'},
-          {id: 'backgroundMusic', src: 'assets/sound/Imminent Threat.mp3'}
+          {id: 'backgroundMusic', src: 'assets/sound/Imminent Threat.mp3'},
+          {id: 'shotSound', src: 'assets/sound/shot.mp3'}
         ]);
         queue.load();
       }
@@ -65,12 +67,11 @@
       function addAssetsToCanvas() { 
 
         // add the background
-        var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"))
+        var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"));
         stage.addChild(backgroundImage); 
 
-
         // add crosshair
-        var crosshairImage = new createjs.Bitmap(queue.getResult("crossHair"))
+        crosshairImage = new createjs.Bitmap(queue.getResult("crossHair"));
         crosshairImage.scaleX=0.3;
         crosshairImage.scaleY=0.3;
         crosshairImage.x = (stage.canvas.width - crosshairImage.image.width * crosshairImage.scaleX) / 2;
@@ -93,15 +94,19 @@
         // add background music 
         createjs.Sound.play("backgroundMusic", {loop: -1});
 
-        spawnZombies(1);
+        // spawn zombies
+        spawnZombies(6);
 
         // add ticker 
-        //createjs.Ticker.setFPS(15);
         createjs.Ticker.addEventListener('tick', stage);
         createjs.Ticker.addEventListener('tick', tickEvent);
+
+        // events for the mouse
+        window.onmousemove = handleMouseMove;
+        window.onmousedown = handleMouseDown;
       }
 
-      // spuns a zombie in a ramdom location (within the screen)
+      // spawns a zombie in a ramdom location (within the screen)
       function spawnZombies(numberOfZombies) { 
 
         if (numberOfZombies <= 0) {
@@ -122,6 +127,29 @@
         }
       }
 
+      function handleMouseMove(event) { 
+        crosshairImage.x = event.clientX - 45;
+        crosshairImage.y = event.clientY - 45;
+      }
+
+      function handleMouseDown(event) { 
+        // play gunshot sound
+        createjs.Sound.play("shotSound");
+
+        // Obtain shot position
+        var shotX = Math.round(event.clientX);
+        var shotY = Math.round(event.clientY);
+
+        // loop through all zombie positions and check if you hit any
+        for (var i = 0; i < zombies.length; i++) { 
+          var zombie = zombies[i];
+          if ((zombie.x < shotX) && (shotX <= (zombie.x + zombie.getImageWidth)) && (zombie.y < shotY) && (shotY <= (zombie.y + zombie.getImageHeight))) {
+              delete zombies[i];
+              break;
+          }
+        }
+      }
+
       function Zombie (stage, manifestItem) {
         this.x = 0;
         this.y = 0;
@@ -131,7 +159,15 @@
         this.maxSpeedY = 10;
         this.manifestItem = manifestItem;
         this.stage = stage;
-        this.zombieImage;        
+        this.zombieImage;
+
+        this.getImageWidth = function() { 
+          return this.zombieImage.image.width;
+        };
+
+        this.getImageHeight = function() { 
+          return this.zombieImage.image.height;
+        };
 
         this.setup = function(ramdomStart) { 
           this.zombieImage = new createjs.Bitmap(this.manifestItem);
@@ -153,7 +189,7 @@
           this.zombieImage.scaleX = this.scaleX;
           this.zombieImage.scaleY = this.scaleY;
 
-          stage.addChild(this.zombieImage); 
+          stage.addChildAt(this.zombieImage, 1); 
         };
 
         this.outsideStageX = function(positionX) {
