@@ -127,8 +127,8 @@
         this.y = 0;
         this.scaleX = 1.5;
         this.scaleY = 1.5;
-        this.maxSpeedX = 20; 
-        this.maxSpeedY = 20;
+        this.maxSpeedX = 10; 
+        this.maxSpeedY = 10;
         this.manifestItem = manifestItem;
         this.stage = stage;
         this.zombieImage;        
@@ -156,45 +156,56 @@
           stage.addChild(this.zombieImage); 
         };
 
-        this.walk = function() {
-
-          this.x += this.maxSpeedX * Math.random(); 
-          this.y += this.maxSpeedY * Math.random();
-
-          if (this.outsideStageX()) { 
-            this.x += this.maxSpeedX * Math.random() * (-1);
-          }
-
-          if (this.outsideStageY()) { 
-            this.y *= this.maxSpeedY * Math.random() * (-1); 
-          }
-
-          this.draw();
-        };
-
-        this.outsideStageX = function() {
+        this.outsideStageX = function(positionX) {
 
           // check left 
-          if (this.x < 0) { 
+          if (positionX < 0) { 
             return true; 
           }
           // check right
-          else if ((this.x + this.zombieImage.image.width * this.scaleX) > this.stage.canvas.width) { 
+          else if ((positionX + this.zombieImage.image.width * this.scaleX) > this.stage.canvas.width) { 
             return true;
           }
           return false;
         };
 
 
-        this.outsideStageY = function() {
+        this.outsideStageY = function(positionY) {
 
-          if (this.y < 0) { 
+          if (positionY < 0) { 
             return true;
           }
-          else if ((this.y + this.zombieImage.image.height * this.scaleY) > this.stage.canvas.height) { 
+          else if ((positionY + this.zombieImage.image.height * this.scaleY) > this.stage.canvas.height) { 
             return true;
           }
           return false;
+        };
+
+        this.walk = function() {
+
+          var stepX = this.maxSpeedX * Math.random(); 
+          var stepY = this.maxSpeedY * Math.random();
+
+          var nextX = this.x + stepX;
+          var nextY = this.y + stepY;
+
+          if (this.outsideStageX(nextX)) { 
+            // flip the max speed symbol and the step 
+            this.maxSpeedX *= (-1);
+            nextX = this.x + stepX * (-1);
+          }
+
+          if (this.outsideStageY(nextY)) { 
+            // flip the max speed symbol and the step
+            this.maxSpeedY *= (-1);
+            nextY = this.y + stepY * (-1);
+          }
+
+          // all good
+          this.x = nextX; 
+          this.y = nextY;
+
+          this.draw();
         };
       }
      
