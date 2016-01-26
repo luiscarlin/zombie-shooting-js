@@ -143,10 +143,11 @@
         var shotY = Math.round(event.clientY);
 
         // loop through all zombie positions and check if you hit any
+        console.log(zombies.length)
         for (var i = 0; i < zombies.length; i++) {
-          var zombie = zombies[i];
 
-          if (isZombieShot(zombie, shotX, shotY)) { 
+          if (isZombieShot(zombies[i], shotX, shotY)) { 
+            console.log(zombies[i].x);
             stage.removeChild(zombies[i].getZombieImage());
             zombies.splice(i, 1);
             break;
@@ -271,9 +272,9 @@
 
       function isZombieShot(zombie, shotX, shotY) { 
 
-        //document.write("shotx " + (shotX) + " shoty " + (shotY) + "</br>"); 
-        //document.write("zombiex " + (zombie.getX()) + " to end " + (zombie.getX() + zombie.getImageWidth() *  zombie.getScaleX()) + "</br>"); 
-        //document.write("zombiey " + (zombie.getY()) + " to end " + (zombie.getY() + zombie.getImageHeight() *  zombie.getScaleY()) + "</br>"); 
+        console.log("shotx " + (shotX) + " shoty " + (shotY)); 
+        console.log("zombiex " + (zombie.getX()) + " to end " + (zombie.getX() + zombie.getImageWidth() *  zombie.getScaleX())); 
+        console.log("zombiey " + (zombie.getY()) + " to end " + (zombie.getY() + zombie.getImageHeight() *  zombie.getScaleY())); 
 
         if ((zombie.getX() < shotX) && (shotX < zombie.getX() + zombie.getImageWidth() *  zombie.getScaleX())) { 
           if ((zombie.getY() < shotY) && (shotY < zombie.getY() + zombie.getImageHeight() *  zombie.getScaleY())) {
