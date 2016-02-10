@@ -35,9 +35,8 @@
 
         // hide the cursor
         canvas.style.cursor = 'none';
-        
         stage = new createjs.Stage("gameCanvas");
-
+        
         loadAssets();
       }
 
@@ -59,14 +58,12 @@
         queue.load();
       }
 
-      function queueLoaded(event) { 
-
+      function queueLoaded(event) {
         addAssetsToCanvas();
         stage.update();
       }
 
       function addAssetsToCanvas() { 
-
         // add the background
         var backgroundImage = new createjs.Bitmap(queue.getResult("backgroundImage"));
         stage.addChild(backgroundImage); 
@@ -109,7 +106,6 @@
 
       // spawns a zombie in a ramdom location (within the screen)
       function spawnZombies(numberOfZombies) { 
-
         if (numberOfZombies <= 0) {
           throw ("Need to specify number of zombies"); 
         }
@@ -205,7 +201,6 @@
           var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
           this.maxSpeedX *= plusOrMinus;
           this.maxSpeedY *= plusOrMinus;
-
         };
 
         this.draw = function () { 
@@ -218,7 +213,6 @@
         };
 
         this.outsideStageX = function(positionX) {
-
           // check left 
           if (positionX < 0) { 
             return true; 
@@ -232,7 +226,6 @@
 
 
         this.outsideStageY = function(positionY) {
-
           if (positionY < 0) { 
             return true;
           }
@@ -243,7 +236,6 @@
         };
 
         this.walk = function() {
-
           var stepX = this.maxSpeedX * Math.random(); 
           var stepY = this.maxSpeedY * Math.random();
 
@@ -271,7 +263,6 @@
       }
 
       function isZombieShot(zombie, shotX, shotY) { 
-
         console.log("shotx " + (shotX) + " shoty " + (shotY)); 
         console.log("zombiex " + (zombie.getX()) + " to end " + (zombie.getX() + zombie.getImageWidth() *  zombie.getScaleX())); 
         console.log("zombiey " + (zombie.getY()) + " to end " + (zombie.getY() + zombie.getImageHeight() *  zombie.getScaleY())); 
