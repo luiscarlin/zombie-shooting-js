@@ -24,6 +24,7 @@
       var zombiePositionY;
       var crosshairImage;
       var zombies = [];
+      var numZombiesShot = 0;
 
       function init() { 
         var canvas = document.getElementById("gameCanvas"); 
@@ -35,6 +36,7 @@
         canvas.style.cursor = 'none';
         stage = new createjs.Stage("gameCanvas");
         
+        // load the art and sound
         loadAssets();
       }
 
@@ -42,6 +44,7 @@
         // set up the loading queue
         queue = new createjs.LoadQueue(false);
         queue.installPlugin(createjs.Sound);
+        // when done loading, call queueLoaded
         queue.on("complete", queueLoaded, this);
         createjs.Sound.alternateExtensions = ["ogg"];
 
@@ -91,7 +94,7 @@
         createjs.Sound.play("backgroundMusic", {loop: -1});
 
         // spawn zombies
-        spawnZombies(6);
+        spawnZombies(1);
 
         // add ticker 
         createjs.Ticker.addEventListener('tick', stage);
@@ -140,15 +143,25 @@
         console.log(zombies.length)
         for (var i = 0; i < zombies.length; i++) {
 
-          if (isZombieShot(zombies[i], shotX, shotY)) { 
+          if (isZombieShot(zombies[i], shotX, shotY)) {
+            // increase number of zombies shot
+            numZombiesShot++;
+
             console.log(zombies[i].x);
+
+            // remove the zombie
             stage.removeChild(zombies[i].getZombieImage());
             zombies.splice(i, 1);
+
+            // spawn twice the amount of zombies
+            spawnZombies(numZombiesShot * 2);
+
             break;
           }
         }
       }
 
+      // zombie class
       function Zombie (stage, manifestItem) {
         this.x = 0;
         this.y = 0;
